@@ -25,7 +25,6 @@ func getDatabaseURL() string {
 	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
 		return dbURL
 	}
-
 	dbUser := os.Getenv("POSTGRES_USER")
 	if dbUser == "" {
 		dbUser = "postgres"
@@ -46,7 +45,6 @@ func getDatabaseURL() string {
 	if dbName == "" {
 		dbName = "korp"
 	}
-
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		dbUser, dbPassword, dbHost, dbPort, dbName)
 }
@@ -75,6 +73,9 @@ func main() {
 	conectarBanco()
 	r := gin.Default()
 	r.Use(cors.Default())
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	})
 	r.GET("/produtos", listarProdutos)
 	r.POST("/produtos", criarProduto)
 	r.PUT("/produtos/:id", atualizarProduto)

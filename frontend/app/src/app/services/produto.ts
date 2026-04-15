@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Produto {
-  id: number;
+  id?: number;
   codigo: string;
   descricao: string;
   saldo: number;
@@ -21,7 +21,7 @@ export class ProdutoService {
     return this.http.get<Produto[]>(this.apiUrl);
   }
 
-  criar(produto: Omit<Produto, 'id'>): Observable<Produto> {
+  criar(produto: Produto): Observable<Produto> {
     return this.http.post<Produto>(this.apiUrl, produto);
   }
 

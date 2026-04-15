@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -94,9 +94,13 @@ export class ProdutosComponent implements OnInit {
   colunas = ['codigo', 'descricao', 'saldo', 'acoes'];
   editando = false;
   idEditando?: number;
-  form: Produto = { id: 0, codigo: '', descricao: '', saldo: 0 };
+  form: Produto = { codigo: '', descricao: '', saldo: 0 };
 
-  constructor(private produtoService: ProdutoService, private snackBar: MatSnackBar) {}
+  constructor(
+    private produtoService: ProdutoService,
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.carregar();
@@ -104,11 +108,11 @@ export class ProdutosComponent implements OnInit {
 
   carregar() {
     this.produtoService.listar().subscribe({
-      next: (produtos: Produto[]) => this.produtos = produtos,
-      error: (err: any) => {
-        console.error('Erro ao carregar produtos:', err);
-        this.snackBar.open('Erro ao carregar produtos', 'Fechar', { duration: 3000 });
-      }
+      next: (produtos: Produto[]) => {
+        this.produtos = produtos;
+        this.cdr.detectChanges();
+      },
+      error: () => this.snackBar.open('Erro ao carregar produtos', 'Fechar', { duration: 3000 })
     });
   }
 
@@ -124,10 +128,7 @@ export class ProdutosComponent implements OnInit {
           this.limpar();
           this.carregar();
         },
-        error: (err: any) => {
-          console.error('Erro ao atualizar produto:', err);
-          this.snackBar.open('Erro ao atualizar produto', 'Fechar', { duration: 3000 });
-        }
+        error: () => this.snackBar.open('Erro ao atualizar produto', 'Fechar', { duration: 3000 })
       });
     } else {
       this.produtoService.criar(this.form).subscribe({
@@ -136,10 +137,7 @@ export class ProdutosComponent implements OnInit {
           this.limpar();
           this.carregar();
         },
-        error: (err: any) => {
-          console.error('Erro ao criar produto:', err);
-          this.snackBar.open('Erro ao criar produto', 'Fechar', { duration: 3000 });
-        }
+        error: () => this.snackBar.open('Erro ao criar produto', 'Fechar', { duration: 3000 })
       });
     }
   }
@@ -156,16 +154,13 @@ export class ProdutosComponent implements OnInit {
         this.snackBar.open('Produto deletado!', 'Fechar', { duration: 3000 });
         this.carregar();
       },
-      error: (err: any) => {
-        console.error('Erro ao deletar produto:', err);
-        this.snackBar.open('Erro ao deletar produto', 'Fechar', { duration: 3000 });
-      }
+      error: () => this.snackBar.open('Erro ao deletar produto', 'Fechar', { duration: 3000 })
     });
   }
 
   limpar() {
     this.editando = false;
     this.idEditando = undefined;
-    this.form = { id: 0, codigo: '', descricao: '', saldo: 0 };
+    this.form = { codigo: '', descricao: '', saldo: 0 };
   }
 }

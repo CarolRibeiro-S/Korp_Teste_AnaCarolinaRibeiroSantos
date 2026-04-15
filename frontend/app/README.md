@@ -1,59 +1,98 @@
-# App
+# Korp ERP - Sistema de Emissão de Notas Fiscais
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+Projeto técnico desenvolvido para o processo seletivo da Korp ERP (Viasoft).
 
-## Development server
+## 🚀 Tecnologias Utilizadas
 
-To start a local development server, run:
+### Frontend
+- Angular 21
+- Angular Material (componentes visuais)
+- RxJS (gerenciamento de requisições HTTP com Observables)
 
+### Backend
+- Go (Golang)
+- Gin Framework (rotas e middlewares)
+- pgx/v5 (driver PostgreSQL)
+
+### Banco de Dados
+- PostgreSQL 15 (via Docker)
+
+## 🏗️ Arquitetura
+
+O sistema foi desenvolvido com arquitetura de microsserviços:
+
+- **Serviço de Estoque** (porta 8081) — gerencia produtos e saldos
+- **Serviço de Faturamento** (porta 8082) — gerencia notas fiscais
+
+## 📋 Funcionalidades
+
+- Cadastro de produtos (código, descrição, saldo)
+- Cadastro de notas fiscais com numeração sequencial
+- Inclusão de múltiplos produtos em uma nota
+- Impressão de notas fiscais (altera status para Fechada e desconta saldo dos produtos)
+- Bloqueio de impressão para notas com status diferente de Aberta
+- Tratamento de falhas entre microsserviços
+
+## ⚙️ Como Rodar o Projeto
+
+### Pré-requisitos
+- Node.js e Angular CLI instalados
+- Go instalado
+- Docker Desktop instalado e rodando
+- PostgreSQL instalado
+
+### 1. Banco de Dados
 ```bash
+docker-compose up -d
+```
+
+### 2. Serviço de Estoque
+```bash
+cd backend/estoque
+go run main.go
+```
+
+### 3. Serviço de Faturamento
+```bash
+cd backend/faturamento
+go run main.go
+```
+
+### 4. Frontend
+```bash
+cd frontend/app
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Acesse: http://localhost:4200
 
-## Code scaffolding
+## 🔧 Detalhamento Técnico
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Ciclos de Vida do Angular utilizados
+- `ngOnInit` — carregamento inicial dos dados em todos os componentes
 
-```bash
-ng generate component component-name
-```
+### RxJS
+- `Observable` — utilizado em todas as requisições HTTP
+- `subscribe` com `next` e `error` — tratamento de sucesso e falha nas requisições
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Bibliotecas Angular
+- `@angular/material` — componentes visuais (tabelas, botões, formulários, snackbar)
+- `@angular/common/http` — requisições HTTP via HttpClient
+- `@angular/forms` — formulários com FormsModule e NgModel
 
-```bash
-ng generate --help
-```
+### Gerenciamento de Dependências no Go
+- `go.mod` e `go.sum` — gerenciamento de módulos e dependências
+- `go get` — instalação de pacotes
 
-## Building
+### Framework Go
+- **Gin** — framework HTTP para criação das rotas REST
+- **pgx/v5** — driver nativo PostgreSQL com suporte a SCRAM-SHA-256
 
-To build the project run:
+### Tratamento de Erros no Backend
+- Verificação de status da nota antes de imprimir
+- Verificação de saldo disponível antes de descontar
+- Retorno de códigos HTTP adequados (400, 404, 500)
+- Comunicação entre microsserviços com verificação de falha
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 👩‍💻 Desenvolvido por
+Ana Carolina Ribeiro Santos
